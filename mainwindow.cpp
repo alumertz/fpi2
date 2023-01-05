@@ -5,8 +5,16 @@
 #include <QMessageBox>
 #include <QString>
 #include <QImage>
+#include <QChartView>
+#define QSHADES 255
+
+
+QT_CHARTS_USE_NAMESPACE
 
 Img *image;
+QChartView *chartView;
+QBarSeries *series;
+QChart *chart;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,12 +28,26 @@ MainWindow::MainWindow(QWidget *parent)
 
     image = new Img(fileName);
     QImage teste= (*image).getLastImg();
-    teste.convertToFormat(QImage::Format_Indexed8);
+    //teste.convertToFormat(QImage::Format_Indexed8);
 
     QString str;
     str.setNum(teste.depth());
     ui->label->setText(str);
     updateImage();
+
+    vector<int> hist = (*image).greyHistogram();
+
+    // CHART
+    chart = createBarChart(hist);
+
+
+    //CHART VIEW
+    chartView = new QChartView(chart);
+    //chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->setParent(ui->originalChart);
+
+
 
 /*
     QPixmap newPic;
@@ -68,50 +90,87 @@ void MainWindow::on_brigthButton_clicked()
     updateImage();
 }
 
+QChart *MainWindow::createBarChart(std::vector<int> &hist)const{
+    //HERE
+    //vector<int> hist = (*image).greyHistogram();
+    int largeSet = hist[0];
+
+    // SET
+    QBarSet *greySet = new QBarSet("Grey");
+    greySet->setColor(Qt::red);
+    greySet->setBorderColor(Qt::red);
+
+    // Assign values for each bar
+    for (int x=0;x<QSHADES; x++){
+        *greySet << hist[x];
+        if (hist[x]>largeSet){
+            largeSet = hist[x];
+        }
+
+    }
+
+
+
+    // SERIES
+    //QBarSeries *series = new QBarSeries();
+    series = new QBarSeries();
+    series->append(greySet);
+
+    greySet = new QBarSet("Grey");
+    for (int x=0;x<QSHADES; x++){
+        *greySet << x;
+    }
+    chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Batting Avg by Year");
+    chart->createDefaultAxes();
+
+
+
+    //AXIS
+    QValueAxis *axisX = new QValueAxis();
+    QValueAxis *axisY = new QValueAxis();
+    axisX->setRange(0,QSHADES);
+    axisY->setRange(0,1000);
+    axisX->setTickCount(10);
+    axisY->setTickCount(10);
+    axisX->setLabelFormat("%d");
+    axisY->setLabelFormat("%d");
+
+    // SET AXIS
+    chart->setAxisX(axisX, series);
+    chart->setAxisY(axisY, series);
+
+    // CONFIG
+    chart->legend()->setVisible(false);
+    QRectF r1(0,0,300,280); //(qreal x, qreal y, qreal width, qreal height)
+    chart->setPlotArea(r1);
+
+    return chart;
+}
+
 void MainWindow::on_histogramButton_clicked()
 {
-    /*vector<int> hist = (*image).greyHistogram();
 
+    //SET
+    QBarSet *set = new QBarSet("other");
+    set->setColor(Qt::red);
+    set->setBorderColor(Qt::red);
 
-
-    //BAR SET
-    QBarSet* greyBarSet = new QBarSet("Gray");
-    greyBarSet->setColor(Qt::black);
-
-    int numPixels = (*image).getNumPixels();
-    int largeFreq = hist[0];
-    int heightGraph
-
-    for (int x=0;x<255;x++){
-        if(hist[x]>largeFreq){
-            largeFreq = hist[x];
-        }
+    vector<int> vet;
+    for (int x =0;x< QSHADES;x++){
+        *set << x;
     }
-    for (int x=0;x<255;x++){
-        *grayBarSet << hist[x] * 100.0 / numberPixels_f;
-    }
-    //END BAR SET
 
-    //SERIES
-    QStackedBarSeries* series = new QStackedBarSeries();
-    series->append(greyBarSet);
+    // SERIES
+    series = new QBarSeries();
+    series->append(set);
 
-    //create chart
-    QChart *chart = new QChart();
-    chart->setTitle("Histogram");
-    chart->createDefaultAxes();
-    chart->setAxisX(axis, series);
-    //pChart->removeAllSeries();
+    chart->removeAllSeries();
+    chart->addSeries(series);
 
-    // add series to the chart and update axisY
 
-    axisY->setRange(0, 255);
-    chart->addSeries(pSeries);
-
-    //VIEW
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setParent(ui->originalChart);*/
+    chartView->update();
 
 }
 
@@ -119,9 +178,6 @@ void MainWindow::on_resetButton_clicked()
 {
     (*image).resetImage();
     updateImage();
-
-
-
 }
 
 void MainWindow::on_contrastButton_clicked()

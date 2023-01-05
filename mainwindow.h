@@ -2,13 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-//#include <QtCharts>
-//#include <QChartView>
-//#include <QtCharts/QBarSeries>
-//#include <QtCharts/QBarSet>
-//#include <QtCharts/QLegend>
-//#include <QtCharts/QBarCategoryAxis>
-//using namespace QtCharts;
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QString>
+#include <QImage>
+#include <QtCharts>
+#include <QChartView>
+#include <vector>
+
+using namespace std;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,5 +41,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QChart *createBarChart(std::vector<int> &hist) const;
 };
 #endif // MAINWINDOW_H
