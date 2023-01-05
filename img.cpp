@@ -13,7 +13,7 @@ Img::Img(QString filePath)
 
     this->width = oriImg.width();
     this->height = oriImg.height();
-    this->numPixels = this->width * this->height();
+    this->numPixels = this->width * this->height;
 
 }
 

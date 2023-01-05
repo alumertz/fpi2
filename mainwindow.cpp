@@ -70,7 +70,7 @@ void MainWindow::on_brigthButton_clicked()
 
 void MainWindow::on_histogramButton_clicked()
 {
-    vector<int> hist = (*image).greyHistogram();
+    /*vector<int> hist = (*image).greyHistogram();
 
 
 
@@ -111,7 +111,7 @@ void MainWindow::on_histogramButton_clicked()
     //VIEW
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setParent(ui->originalChart);
+    chartView->setParent(ui->originalChart);*/
 
 }
 

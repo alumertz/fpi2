@@ -2,13 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtCharts>
-#include <QChartView>
+//#include <QtCharts>
+//#include <QChartView>
 //#include <QtCharts/QBarSeries>
 //#include <QtCharts/QBarSet>
 //#include <QtCharts/QLegend>
 //#include <QtCharts/QBarCategoryAxis>
-
+//using namespace QtCharts;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
