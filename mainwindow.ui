@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>630</width>
+    <width>945</width>
     <height>670</height>
    </rect>
   </property>
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="histogramButton">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>100</y>
+      <x>20</x>
+      <y>110</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -30,7 +30,7 @@
    <widget class="QPushButton" name="openButton">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>20</y>
       <width>111</width>
       <height>21</height>
@@ -69,9 +69,9 @@
    <widget class="QSpinBox" name="brightBox">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>120</x>
       <y>190</y>
-      <width>48</width>
+      <width>51</width>
       <height>26</height>
      </rect>
     </property>
@@ -85,7 +85,7 @@
    <widget class="QPushButton" name="brigthButton">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>190</y>
       <width>91</width>
       <height>25</height>
@@ -95,13 +95,109 @@
      <string>Brigthness</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="resetButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reset image</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="contrastButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Contrast</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="contrastBox">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>230</y>
+      <width>51</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>255</number>
+    </property>
+    <property name="singleStep">
+     <number>1</number>
+    </property>
+    <property name="stepType">
+     <enum>QAbstractSpinBox::DefaultStepType</enum>
+    </property>
+    <property name="displayIntegerBase">
+     <number>10</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="negativeButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Negative</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="originalChart">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>10</y>
+      <width>300</width>
+      <height>300</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout"/>
+   </widget>
+   <widget class="QFrame" name="newChart">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>340</y>
+      <width>300</width>
+      <height>300</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>630</width>
+     <width>945</width>
      <height>22</height>
     </rect>
    </property>

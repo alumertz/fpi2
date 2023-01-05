@@ -2,6 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtCharts>
+#include <QChartView>
+//#include <QtCharts/QBarSeries>
+//#include <QtCharts/QBarSet>
+//#include <QtCharts/QLegend>
+//#include <QtCharts/QBarCategoryAxis>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,13 +23,19 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_histogram_clicked();
+    void on_histogramButton_clicked();
 
     void on_openButton_clicked();
 
     void on_brigthButton_clicked();
 
-    void on_histogramButton_clicked();
+    void updateImage();
+
+    void on_resetButton_clicked();
+
+    void on_contrastButton_clicked();
+
+    void on_negativeButton_clicked();
 
 private:
     Ui::MainWindow *ui;
