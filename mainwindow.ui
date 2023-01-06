@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1129</width>
+    <width>1264</width>
     <height>716</height>
    </rect>
   </property>
@@ -43,8 +43,8 @@
    <widget class="QLabel" name="oldImage">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>10</y>
+      <x>230</x>
+      <y>30</y>
       <width>300</width>
       <height>300</height>
      </rect>
@@ -56,8 +56,8 @@
    <widget class="QLabel" name="newImage">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>320</y>
+      <x>610</x>
+      <y>30</y>
       <width>300</width>
       <height>300</height>
      </rect>
@@ -172,9 +172,9 @@
    <widget class="QFrame" name="originalChart">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>10</y>
-      <width>400</width>
+      <x>180</x>
+      <y>360</y>
+      <width>350</width>
       <height>300</height>
      </rect>
     </property>
@@ -183,9 +183,9 @@
    <widget class="QFrame" name="newChart">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>340</y>
-      <width>400</width>
+      <x>540</x>
+      <y>360</y>
+      <width>350</width>
       <height>300</height>
      </rect>
     </property>
@@ -204,13 +204,89 @@
      <string>Equalize</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>10</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Original</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>10</y>
+      <width>71</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Processed</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="resImage">
+    <property name="geometry">
+     <rect>
+      <x>940</x>
+      <y>30</y>
+      <width>300</width>
+      <height>300</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Result Image</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="resChart">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>360</y>
+      <width>350</width>
+      <height>300</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>10</y>
+      <width>71</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Result</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="matchingButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>320</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Histogram matching</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1129</width>
+     <width>1264</width>
      <height>22</height>
     </rect>
    </property>

@@ -44,6 +44,8 @@ private slots:
 
     void on_equalizeButton_clicked();
 
+    void on_matchingButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QChart* createBarCharts() const;

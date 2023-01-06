@@ -10,6 +10,7 @@
 #include <QDebug>
 #include<cmath>
 #include <typeinfo>
+#include <string>
 
 using namespace std;
 
@@ -27,17 +28,18 @@ class Img
     public:
         Img(QString filePath);
         void resetImage();
-        QImage getOriginalImg(){ return oriImg;}
+        QImage getOriImg(){ return oriImg;}
         QImage getLastImg(){return lastImg;}
         void changeBrightness(int value);
-        void convertToGreyScale();
+        QImage convertToGreyScale(QImage img);
         void changeContrast(int value);
         void negative();
         QMap<QRgb,long> histogram();
-        vector<int> greyHistogram();
         int getNumPixels();
-        vector<int> greyHistogramCum();
+        vector<int> greyHistogram(QImage img);
+        vector<int> greyHistogramCum(QImage img);
         void greyImageEqualization();
+        QImage greyHistMatching(QImage matchImg);
 
 };
 

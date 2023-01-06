@@ -12,16 +12,16 @@
 QT_CHARTS_USE_NAMESPACE
 
 Img *image;
-QChartView *oriChartView, *newChartView;
+QChartView *oriChartView, *newChartView, *resChartView;
 QBarSeries *series;
-QChart *oriChart, *newChart;
+QChart *oriChart, *newChart, *resChart;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/cameraman.jpg";
+    QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/flowers.bmp";
     //QMessageBox::information(this, "..", fileName);
     QPixmap oldPic (fileName);
     ui->oldImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     // CHART
     oriChart = createBarCharts();
     newChart = createBarCharts();
+    resChart = createBarCharts();
 
     //ORICHART VIEW
     oriChartView = new QChartView(oriChart);
@@ -49,6 +50,11 @@ MainWindow::MainWindow(QWidget *parent)
     newChartView = new QChartView(newChart);
     newChartView->setRenderHint(QPainter::Antialiasing);
     newChartView->setParent(ui->newChart);
+
+    //RESCHART VIEW
+    resChartView = new QChartView(resChart);
+    resChartView->setRenderHint(QPainter::Antialiasing);
+    resChartView->setParent(ui->resChart);
 
 
 
@@ -79,10 +85,19 @@ void MainWindow::on_openButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
     //QMessageBox::information(this, "..", fileName);
-    QPixmap oldPic (fileName);
-    ui->oldImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
-    ui->newImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
     image = new Img (fileName);
+    QImage oriImg = image->getOriImg();
+    QImage lastImg = image->getLastImg();
+
+    QPixmap oriPic;
+    oriPic = oriPic.fromImage(oriImg.scaled(300,300,Qt::KeepAspectRatio));
+
+    QPixmap lastPic;
+    lastPic = lastPic.fromImage(lastImg.scaled(300,300,Qt::KeepAspectRatio));
+
+    ui->oldImage->setPixmap(oriPic.scaled(300,300,Qt::KeepAspectRatio));
+    ui->newImage->setPixmap(lastPic.scaled(300,300,Qt::KeepAspectRatio));
+
 
 }
 
@@ -152,14 +167,20 @@ void MainWindow::updateChart(std::vector<int> &hist, QChart * chart, QChartView 
 
 void MainWindow::on_histogramButton_clicked()
 {
-    vector<int> hist = (*image).greyHistogram();
+    //Orginal image
+    QImage oriGrey = (*image).convertToGreyScale((*image).getOriImg());
+    vector<int> hist = (*image).greyHistogram(oriGrey);
     updateChart(hist, oriChart,oriChartView);
 
-
-    vector<int> newHist = (*image).greyHistogram();
-
+    //Last Image
+    QImage lastGrey = (*image).convertToGreyScale((*image).getLastImg());
+    vector<int> newHist = (*image).greyHistogram(lastGrey);
     updateChart(newHist, newChart,newChartView);
     updateImage();
+
+    //RESCHART TEMPORARILY
+    vector<int> cumHist = (*image).greyHistogramCum(lastGrey);
+    updateChart(cumHist, resChart,resChartView);
 
 }
 
@@ -187,10 +208,23 @@ void MainWindow::on_negativeButton_clicked()
 
 void MainWindow::on_equalizeButton_clicked()
 {
+    //QImage lastGrey = (*image).convertToGreyScale((*image).getLastImg());
     (*image).greyImageEqualization();
-    vector<int> newHist = (*image).greyHistogram();
+
+    vector<int> newHist = (*image).greyHistogram((*image).getLastImg());
 
     updateChart(newHist, newChart,newChartView);
     updateImage();
+}
+
+
+void MainWindow::on_matchingButton_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
+    //QMessageBox::information(this, "Essa imagem ", fileName);
+    QPixmap secPic (fileName);
+    ui->newImage->setPixmap(secPic.scaled(300,300,Qt::KeepAspectRatio));
+    QImage matchImg(fileName);
+    QImage resImage = (*image).greyHistMatching(matchImg);
 }
 
