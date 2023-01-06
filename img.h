@@ -7,6 +7,9 @@
 #include <QString>
 #include <QColor>
 #include <QMap>
+#include <QDebug>
+#include<cmath>
+#include <typeinfo>
 
 using namespace std;
 
@@ -33,6 +36,8 @@ class Img
         QMap<QRgb,long> histogram();
         vector<int> greyHistogram();
         int getNumPixels();
+        vector<int> greyHistogramCum();
+        void greyImageEqualization();
 
 };
 

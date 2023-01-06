@@ -48,7 +48,7 @@ void Img::changeBrightness(int value){
             red = adjustValue(oldColor.red()+value);
             green = adjustValue(oldColor.green()+value);
             blue = adjustValue(oldColor.blue()+value);
-            QRgb newColor = qRgb(red,green,blue);
+            newColor = qRgb(red,green,blue);
             lastImg.setPixel(x,y,newColor);
         }
     }
@@ -67,7 +67,7 @@ void Img::changeContrast(int value){
             red = adjustValue(oldColor.red()*per);
             green = adjustValue(oldColor.green()*per);
             blue = adjustValue(oldColor.blue()*per);
-            QRgb newColor = qRgb(red,green,blue);
+            newColor = qRgb(red,green,blue);
             lastImg.setPixel(x,y,newColor);
         }
     }
@@ -84,7 +84,7 @@ void Img::negative(){
             red = 255-oldColor.red();
             green = 255-oldColor.green();
             blue = 255-oldColor.blue();
-            QRgb newColor = qRgb(red,green,blue);
+            newColor = qRgb(red,green,blue);
             lastImg.setPixel(x,y,newColor);
         }
     }
@@ -102,6 +102,34 @@ vector<int> Img::greyHistogram(){
         }
     }
     return hist;
+}
+
+vector<int> Img::greyHistogramCum(){
+    float scale = 255.0/this->numPixels;
+
+    vector<int> hist = this->greyHistogram();
+    vector<int> histCum (255, 0);
+
+    histCum[0] = scale * hist[0];
+
+    for (int x=1;x<=255;x++){
+        histCum[x] = histCum[x-1] + scale *hist[x];
+    }
+    return histCum;
+}
+
+void Img::greyImageEqualization(){//Equalizes grey oriImg into lastImg
+    QRgb newColor ;
+    vector<int> histCum = this->greyHistogramCum();
+    int shade, newShade;
+    for(int x = 0; x<this->width; x++){
+        for(int y = 0; y<this->height; y++){
+            shade = QColor(this->oriImg.pixel(x,y)).red();
+            newShade = histCum[shade];
+            newColor = qRgb(newShade,newShade,newShade);
+            lastImg.setPixel(x,y,newColor);
+        }
+    }
 }
 
 QMap<QRgb,long> Img::histogram(){

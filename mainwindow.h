@@ -39,8 +39,13 @@ private slots:
 
     void on_negativeButton_clicked();
 
+    void updateChart(std::vector<int> &hist, QChart * chart, QChartView *chartView);
+
+
+    void on_equalizeButton_clicked();
+
 private:
     Ui::MainWindow *ui;
-    QChart *createBarChart(std::vector<int> &hist) const;
+    QChart* createBarCharts() const;
 };
 #endif // MAINWINDOW_H

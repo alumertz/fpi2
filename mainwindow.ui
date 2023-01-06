@@ -191,6 +191,19 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2"/>
    </widget>
+   <widget class="QPushButton" name="equalizeButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>280</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Equalize</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

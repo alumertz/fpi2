@@ -12,9 +12,9 @@
 QT_CHARTS_USE_NAMESPACE
 
 Img *image;
-QChartView *chartView;
+QChartView *oriChartView, *newChartView;
 QBarSeries *series;
-QChart *chart;
+QChart *oriChart, *newChart;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -35,17 +35,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label->setText(str);
     updateImage();
 
-    vector<int> hist = (*image).greyHistogram();
 
     // CHART
-    chart = createBarChart(hist);
+    oriChart = createBarCharts();
+    newChart = createBarCharts();
 
+    //ORICHART VIEW
+    oriChartView = new QChartView(oriChart);
+    oriChartView->setRenderHint(QPainter::Antialiasing);
+    oriChartView->setParent(ui->originalChart);
 
-    //CHART VIEW
-    chartView = new QChartView(chart);
-    //chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setParent(ui->originalChart);
+    //NEWCHART VIEW
+    newChartView = new QChartView(newChart);
+    newChartView->setRenderHint(QPainter::Antialiasing);
+    newChartView->setParent(ui->newChart);
 
 
 
@@ -90,42 +93,18 @@ void MainWindow::on_brigthButton_clicked()
     updateImage();
 }
 
-QChart *MainWindow::createBarChart(std::vector<int> &hist)const{
+QChart* MainWindow::createBarCharts()const{
     //HERE
-    //vector<int> hist = (*image).greyHistogram();
-    int largeSet = hist[0];
 
     // SET
     QBarSet *greySet = new QBarSet("Grey");
     greySet->setColor(Qt::red);
     greySet->setBorderColor(Qt::red);
 
-    // Assign values for each bar
-    for (int x=0;x<QSHADES; x++){
-        *greySet << hist[x];
-        if (hist[x]>largeSet){
-            largeSet = hist[x];
-        }
-
-    }
-
-
-
     // SERIES
-    //QBarSeries *series = new QBarSeries();
     series = new QBarSeries();
-    series->append(greySet);
 
-    greySet = new QBarSet("Grey");
-    for (int x=0;x<QSHADES; x++){
-        *greySet << x;
-    }
-    chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Batting Avg by Year");
-    chart->createDefaultAxes();
-
-
+    QChart *chart = new QChart();
 
     //AXIS
     QValueAxis *axisX = new QValueAxis();
@@ -141,25 +120,24 @@ QChart *MainWindow::createBarChart(std::vector<int> &hist)const{
     chart->setAxisX(axisX, series);
     chart->setAxisY(axisY, series);
 
+    //QBarSeries *nSeries = new QBarSeries();
+    //newChart->setAxisX(axisX, nSeries);
+    //newChart->setAxisY(axisY, nSeries);
+
     // CONFIG
     chart->legend()->setVisible(false);
-    QRectF r1(0,0,300,280); //(qreal x, qreal y, qreal width, qreal height)
-    chart->setPlotArea(r1);
-
+    chart->setPlotArea(QRectF (0,0,300,280));//QRECTF(qreal x, qreal y, qreal width, qreal height)
     return chart;
 }
 
-void MainWindow::on_histogramButton_clicked()
-{
-
+void MainWindow::updateChart(std::vector<int> &hist, QChart * chart, QChartView *chartView){
     //SET
     QBarSet *set = new QBarSet("other");
     set->setColor(Qt::red);
     set->setBorderColor(Qt::red);
 
-    vector<int> vet;
     for (int x =0;x< QSHADES;x++){
-        *set << x;
+        *set << hist[x];
     }
 
     // SERIES
@@ -168,9 +146,20 @@ void MainWindow::on_histogramButton_clicked()
 
     chart->removeAllSeries();
     chart->addSeries(series);
-
-
     chartView->update();
+
+}
+
+void MainWindow::on_histogramButton_clicked()
+{
+    vector<int> hist = (*image).greyHistogram();
+    updateChart(hist, oriChart,oriChartView);
+
+
+    vector<int> newHist = (*image).greyHistogram();
+
+    updateChart(newHist, newChart,newChartView);
+    updateImage();
 
 }
 
@@ -192,3 +181,16 @@ void MainWindow::on_negativeButton_clicked()
     (*image).negative();
     updateImage();
 }
+
+
+
+
+void MainWindow::on_equalizeButton_clicked()
+{
+    (*image).greyImageEqualization();
+    vector<int> newHist = (*image).greyHistogram();
+
+    updateChart(newHist, newChart,newChartView);
+    updateImage();
+}
+
