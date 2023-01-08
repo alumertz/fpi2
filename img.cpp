@@ -109,7 +109,7 @@ vector<int> Img::greyHistogram(QImage img){
     return hist;
 }
 
-vector<int> Img::greyHistogramCum(QImage img){
+vector<int> Img::greyHistogramCum(QImage img){ //receves coloured image, but returns its grey histogram
     float scale = 255.0/this->numPixels;
 
     vector<int> hist = this->greyHistogram(img);
@@ -118,19 +118,14 @@ vector<int> Img::greyHistogramCum(QImage img){
 
     histCum[0] = scale * hist[0];
 
-    qDebug() << "tste";
-    qDebug() << "sacle " << scale;
-    qDebug() << "pixels  ";
-    qDebug() << this->numPixels;
-
     for (int x=1;x<=255;x++){
         histCum[x] = histCum[x-1] + scale *hist[x];
-        qDebug() << x<< "," << histCum[x] <<";" << "s*h "<< scale *hist[x];
+        //qDebug() << x<< "," << histCum[x] <<";" << "s*h "<< scale *hist[x];
     }
 
     for (int x=0;x<=255;x++){
         histCum2[x] = static_cast<int>(round(histCum[x]));
-        qDebug() <<histCum[x]<< "," << histCum2[x] <<";";
+        //qDebug() <<histCum[x]<< "," << histCum2[x] <<";";
     }
     return histCum2;
 }
@@ -153,39 +148,47 @@ void Img::greyImageEqualization(){//Equalizes lastImg, turning grey, saves in la
 }
 
 int findClosestShade(int search, std::vector<int> histCumMatch){
-    int minDif = histCumMatch[0]- search;
+    qDebug() << "search" << search;
+    int minDif = abs(histCumMatch[0]- search);
+    qDebug() << "minDif" << minDif;
     int shadeMinDif = 0;
     int newDif;
     for (int x=1; x<=255;x++){
-        newDif = histCumMatch[x]-search;
+        newDif = abs(histCumMatch[x]-search);
         if (newDif< minDif){
-            minDif = newDif;
+            minDif = newDif;            
             shadeMinDif = x;
+            qDebug() << "minDif" << minDif;
+            qDebug() << "shademinDif" << shadeMinDif;
         }
     }
     return shadeMinDif;
 }
 
 QImage Img::greyHistMatching(QImage matchImg){//original = src, match=target, last= HM_src
-    QImage resImg;
-    vector<int> histOri = this->greyHistogramCum(this->getOriImg());
-    vector<int> histMatch = this->greyHistogramCum(this->getOriImg());
+    QImage resImg (this->getOriImg().size(), this->getOriImg().format());
+
+    vector<int> histOri = this->greyHistogram(this->getOriImg());
+    vector<int> histMatch = this->greyHistogram(this->getOriImg());
     vector<int> histCumOri = this->greyHistogramCum(matchImg); //F1
     vector<int> histCumMatch = this->greyHistogramCum(matchImg); //F2
 
     vector<int> match (256, 0);
     int shade, newShade;
     QRgb newColor;
-
+    qDebug() << "teste";
     for (int x=0; x<=255;x++){
         match[x] = findClosestShade(histCumOri[x], histCumMatch);  //find F1(G1) = F2(G2)
+        //qDebug() << match[x];
     }
+    qDebug() << "\nspace\n";
     for(int x = 0; x<this->width; x++){
         for(int y = 0; y<this->height; y++){
             shade = QColor(this->oriImg.pixel(x,y)).red();
             newShade = match[shade];
+            //qDebug() << newShade;
             newColor = qRgb(newShade,newShade,newShade);
-            lastImg.setPixel(x,y,newColor);
+            resImg.setPixel(x,y,newColor);
         }
     }
 

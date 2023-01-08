@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/flowers.bmp";
+    QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/manuelOriginal.png";
     //QMessageBox::information(this, "..", fileName);
     QPixmap oldPic (fileName);
     ui->oldImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
@@ -203,9 +203,6 @@ void MainWindow::on_negativeButton_clicked()
     updateImage();
 }
 
-
-
-
 void MainWindow::on_equalizeButton_clicked()
 {
     //QImage lastGrey = (*image).convertToGreyScale((*image).getLastImg());
@@ -217,14 +214,28 @@ void MainWindow::on_equalizeButton_clicked()
     updateImage();
 }
 
-
 void MainWindow::on_matchingButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
+    //QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
     //QMessageBox::information(this, "Essa imagem ", fileName);
-    QPixmap secPic (fileName);
+
+    QPixmap secPic ("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
     ui->newImage->setPixmap(secPic.scaled(300,300,Qt::KeepAspectRatio));
-    QImage matchImg(fileName);
-    QImage resImage = (*image).greyHistMatching(matchImg);
+
+    QImage matchImg("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
+    QImage resImg = (*image).greyHistMatching(matchImg);
+
+    QPixmap resPic;
+    resPic = resPic.fromImage(resImg.scaled(300,300,Qt::KeepAspectRatio));
+
+    ui->resImage->setPixmap(resPic.scaled(300,300,Qt::KeepAspectRatio));
+    qDebug() << "teste4";
+
+    QImage secGrey = (*image).convertToGreyScale(matchImg);
+    vector<int> histSec = (*image).greyHistogram(secGrey);
+    updateChart(histSec, newChart,newChartView);
+
+    vector<int> histRes = (*image).greyHistogram(resImg);
+    updateChart(histRes, resChart,resChartView);
 }
 
