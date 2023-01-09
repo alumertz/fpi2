@@ -22,7 +22,7 @@ int Img::getNumPixels(){
 }
 
 void Img::resetImage(){
-    this->lastImg = this->oriImg;
+    this->lastImg = this->oriImg.copy();
 }
 
 QImage Img::convertToGreyScale(QImage img){
@@ -225,4 +225,91 @@ int Img::adjustValue(int value){
         value = 255;
     }
     return value;
+}
+
+QImage Img::zoomOut(int sx, int sy){
+    int width = this->lastImg.width();
+    int height = this->lastImg.height();
+
+    int timesx = static_cast<int>(ceil(width*1.0/sx));
+    int timesy = static_cast<int>(ceil(height*1.0/sy));
+
+    QColor oldColor;
+    QRgb newColor;
+    QImage img (QSize(timesx, timesy), this->lastImg.format());
+
+    int pix=sx, piy=sy;
+
+    qDebug() << "old size " << width << " x " << height;
+    qDebug() << "new size" << timesx << " x " << timesy;
+
+    for (int x = 0; x < timesx; x++) {
+        for (int y = 0; y < timesy; y++) {
+            //cout << " x " << x << " y " << y << "\n";
+            if ((x == timesx - 1 && width % sx != 0) ||  (y == timesy - 1 && height % sy != 0)) {
+              if((y == timesy - 1) && (x == timesx - 1)){
+                pix = width % sx;
+                piy = height % sy;
+              }
+              else if (y == timesy - 1)  {
+                pix = width % sx;
+                piy = sy;
+              } else  {
+                pix = sx;
+                piy = height % sy;
+              }
+
+            } else {
+          pix = sx;
+          piy = sy;
+        }
+
+            newColor = calcColor(pix, piy,x*pix,y*piy);
+
+            img.setPixel(x,y,newColor);
+
+
+        }
+    }
+    qDebug() << "size img " << img.size();
+    qDebug() << "size lastImg" << this->lastImg.size();
+    this->lastImg = img.copy();
+    qDebug() << "size lastImg" << this->lastImg.size() << "\n";
+    this->width = this->lastImg.width();
+    this->height = this->lastImg.height();
+    return this->lastImg;
+
+}
+QRgb Img::calcColor(int pix, int piy, int x, int y){
+    int addR =0, addG =0, addB =0, pixels = pix*piy;
+    QRgb newColor;
+    QColor oldColor;
+
+    if (x==158 && y ==216){
+        qDebug() << "x "<< x << " y "<< y;
+    }
+    //qDebug() << "pixels " << pixels;
+
+    for (int i = 0; i < pix; i++) {
+        for (int j = 0; j < piy; j++) {
+            oldColor = QColor(this->lastImg.pixel(i+x,j+y));
+            addR+= oldColor.red();
+            addG+= oldColor.green();
+            addB+= oldColor.blue();
+            if (x==158 && y ==216){
+                qDebug() <<" r " << addR << " g " << addG << " b " << addB;
+            }
+
+        }
+    }
+    addR = addR*1.0/pixels;
+    addG = addG*1.0/pixels;
+    addB = addB*1.0/pixels;
+    newColor = qRgb(addR,addG,addB);
+    if (x==158 && y ==216){
+        qDebug() <<"soma r " << addR << " g " << addG << " b " << addB;
+    }
+    //qDebug () << "\n\n break\n\n";
+    return newColor;
+
 }

@@ -41,10 +41,11 @@ private slots:
 
     void updateChart(std::vector<int> &hist, QChart * chart, QChartView *chartView);
 
-
     void on_equalizeButton_clicked();
 
     void on_matchingButton_clicked();
+
+    void on_zoomOutButton_clicked();
 
 private:
     Ui::MainWindow *ui;

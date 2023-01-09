@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1264</width>
+    <width>1314</width>
     <height>716</height>
    </rect>
   </property>
@@ -40,27 +40,33 @@
      <string>Open image</string>
     </property>
    </widget>
-   <widget class="QLabel" name="oldImage">
+   <widget class="QLabel" name="oriImage">
     <property name="geometry">
      <rect>
-      <x>230</x>
+      <x>250</x>
       <y>30</y>
       <width>300</width>
       <height>300</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
     </property>
     <property name="text">
      <string>Original Image</string>
     </property>
    </widget>
-   <widget class="QLabel" name="newImage">
+   <widget class="QLabel" name="proImage">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>630</x>
       <y>30</y>
       <width>300</width>
       <height>300</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
     </property>
     <property name="text">
      <string>Processed Image</string>
@@ -146,8 +152,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>80</y>
+      <x>130</x>
+      <y>50</y>
       <width>67</width>
       <height>17</height>
      </rect>
@@ -172,22 +178,28 @@
    <widget class="QFrame" name="originalChart">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>230</x>
       <y>360</y>
       <width>350</width>
       <height>300</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout"/>
    </widget>
    <widget class="QFrame" name="newChart">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>600</x>
       <y>360</y>
       <width>350</width>
       <height>300</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2"/>
    </widget>
@@ -233,11 +245,14 @@
    <widget class="QLabel" name="resImage">
     <property name="geometry">
      <rect>
-      <x>940</x>
+      <x>980</x>
       <y>30</y>
       <width>300</width>
       <height>300</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
     </property>
     <property name="text">
      <string>Result Image</string>
@@ -246,18 +261,21 @@
    <widget class="QFrame" name="resChart">
     <property name="geometry">
      <rect>
-      <x>900</x>
+      <x>960</x>
       <y>360</y>
       <width>350</width>
       <height>300</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_3"/>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>910</x>
+      <x>980</x>
       <y>10</y>
       <width>71</width>
       <height>17</height>
@@ -280,13 +298,65 @@
      <string>Histogram matching</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="zoomOutButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Zoom out</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="zoomXbox">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>360</y>
+      <width>44</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="zoomYbox">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>360</y>
+      <width>44</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="zoomInButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>400</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Zoom in</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1264</width>
+     <width>1314</width>
      <height>22</height>
     </rect>
    </property>

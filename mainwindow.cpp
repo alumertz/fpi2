@@ -15,6 +15,7 @@ Img *image;
 QChartView *oriChartView, *newChartView, *resChartView;
 QBarSeries *series;
 QChart *oriChart, *newChart, *resChart;
+QImage oriImage, proImage, resImage;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,14 +25,14 @@ MainWindow::MainWindow(QWidget *parent)
     QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/manuelOriginal.png";
     //QMessageBox::information(this, "..", fileName);
     QPixmap oldPic (fileName);
-    ui->oldImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
+    ui->oriImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
+
 
     image = new Img(fileName);
-    QImage teste= (*image).getLastImg();
-    //teste.convertToFormat(QImage::Format_Indexed8);
+    oriImage= (*image).getLastImg();
+    proImage= (*image).getLastImg();
 
     QString str;
-    str.setNum(teste.depth());
     ui->label->setText(str);
     updateImage();
 
@@ -55,16 +56,6 @@ MainWindow::MainWindow(QWidget *parent)
     resChartView = new QChartView(resChart);
     resChartView->setRenderHint(QPainter::Antialiasing);
     resChartView->setParent(ui->resChart);
-
-
-
-/*
-    QPixmap newPic;
-    QImage * timg = (*image).getLastImg();
-
-    newPic = newPic.fromImage((*timg).scaled(300,300,Qt::KeepAspectRatio));
-    ui->newImage->setPixmap(newPic);*/
-
 }
 
 
@@ -75,10 +66,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateImage(){
     QPixmap newPic;
-    QImage timg = (*image).getLastImg();
+    proImage = (*image).getLastImg();
 
-    newPic = newPic.fromImage(timg.scaled(300,300,Qt::KeepAspectRatio));
-    ui->newImage->setPixmap(newPic);
+    newPic = newPic.fromImage(proImage.scaled(300,300,Qt::KeepAspectRatio));
+    ui->proImage->setPixmap(newPic);
+
 }
 
 void MainWindow::on_openButton_clicked()
@@ -95,8 +87,8 @@ void MainWindow::on_openButton_clicked()
     QPixmap lastPic;
     lastPic = lastPic.fromImage(lastImg.scaled(300,300,Qt::KeepAspectRatio));
 
-    ui->oldImage->setPixmap(oriPic.scaled(300,300,Qt::KeepAspectRatio));
-    ui->newImage->setPixmap(lastPic.scaled(300,300,Qt::KeepAspectRatio));
+    ui->oriImage->setPixmap(oriPic.scaled(300,300,Qt::KeepAspectRatio));
+    ui->proImage->setPixmap(lastPic.scaled(300,300,Qt::KeepAspectRatio));
 
 
 }
@@ -173,14 +165,14 @@ void MainWindow::on_histogramButton_clicked()
     updateChart(hist, oriChart,oriChartView);
 
     //Last Image
-    QImage lastGrey = (*image).convertToGreyScale((*image).getLastImg());
+    QImage lastGrey = (*image).convertToGreyScale(proImage);
     vector<int> newHist = (*image).greyHistogram(lastGrey);
     updateChart(newHist, newChart,newChartView);
     updateImage();
 
     //RESCHART TEMPORARILY
-    vector<int> cumHist = (*image).greyHistogramCum(lastGrey);
-    updateChart(cumHist, resChart,resChartView);
+    //vector<int> cumHist = (*image).greyHistogramCum(resImage);
+    //updateChart(cumHist, resChart,resChartView);
 
 }
 
@@ -219,23 +211,47 @@ void MainWindow::on_matchingButton_clicked()
     //QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
     //QMessageBox::information(this, "Essa imagem ", fileName);
 
-    QPixmap secPic ("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
-    ui->newImage->setPixmap(secPic.scaled(300,300,Qt::KeepAspectRatio));
-
+    //GETS SECOND IMAGE
     QImage matchImg("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
-    QImage resImg = (*image).greyHistMatching(matchImg);
 
-    QPixmap resPic;
-    resPic = resPic.fromImage(resImg.scaled(300,300,Qt::KeepAspectRatio));
 
-    ui->resImage->setPixmap(resPic.scaled(300,300,Qt::KeepAspectRatio));
-    qDebug() << "teste4";
-
+    //DISPLAY SECOND IMAGE SELECTED
+    QPixmap secPic ("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
+    ui->proImage->setPixmap(secPic.scaled(300,300,Qt::KeepAspectRatio));
     QImage secGrey = (*image).convertToGreyScale(matchImg);
     vector<int> histSec = (*image).greyHistogram(secGrey);
     updateChart(histSec, newChart,newChartView);
 
-    vector<int> histRes = (*image).greyHistogram(resImg);
+    //RESULT IMAGE
+
+    resImage = (*image).greyHistMatching(matchImg);
+
+    QPixmap resPic;
+    resPic = resPic.fromImage(resImage.scaled(300,300,Qt::KeepAspectRatio));
+    ui->resImage->setPixmap(resPic.scaled(300,300,Qt::KeepAspectRatio));
+
+    vector<int> histRes = (*image).greyHistogram(resImage);
     updateChart(histRes, resChart,resChartView);
+
+
+
+
+}
+
+void MainWindow::on_zoomOutButton_clicked()
+{
+
+
+    int zoomX = ui->zoomXbox->value();
+    int zoomY = ui->zoomYbox->value();
+    QImage img = (*image).zoomOut(zoomX,zoomY);
+
+    QPixmap newPic;
+    newPic = newPic.fromImage(img);
+    ui->proImage->setPixmap(newPic);
+
+    QPixmap oldPic;
+    oldPic = oldPic.fromImage((*image).getOriImg());
+    ui->oriImage->setPixmap(oldPic);
 }
 
