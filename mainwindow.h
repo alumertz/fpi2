@@ -47,6 +47,8 @@ private slots:
 
     void on_zoomOutButton_clicked();
 
+    void on_zoomInButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QChart* createBarCharts() const;

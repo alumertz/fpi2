@@ -42,6 +42,7 @@ class Img
         QImage greyHistMatching(QImage matchImg);
         QRgb calcColor(int pix, int piy, int x, int y);
         QImage zoomOut(int sx, int sy );
+        QImage zoomIn();
 };
 
 #endif // IMAGE_H

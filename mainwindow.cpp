@@ -255,3 +255,17 @@ void MainWindow::on_zoomOutButton_clicked()
     ui->oriImage->setPixmap(oldPic);
 }
 
+
+void MainWindow::on_zoomInButton_clicked()
+{
+    QImage img = (*image).zoomIn();
+
+    QPixmap newPic;
+    newPic = newPic.fromImage(img);
+    ui->proImage->setPixmap(newPic);
+
+    QPixmap oldPic;
+    oldPic = oldPic.fromImage((*image).getOriImg());
+    ui->oriImage->setPixmap(oldPic);
+}
+
