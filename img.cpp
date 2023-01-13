@@ -238,29 +238,29 @@ QImage Img::zoomOut(int sx, int sy){
     QRgb newColor;
     QImage img (QSize(timesx, timesy), this->lastImg.format());
 
-    int pix=sx, piy=sy;
+    int xrec, yrec;
 
     for (int x = 0; x < timesx; x++) {
         for (int y = 0; y < timesy; y++) {
 
-            if ((x == timesx - 1 && width % sx != 0) ||  (y == timesy - 1 && height % sy != 0)) {
-              if((y == timesy - 1) && (x == timesx - 1)){
-                pix = width % sx;
-                piy = height % sy;
-              }
-              else if (y == timesy - 1)  {
-                pix = width % sx;
-                piy = sy;
-              } else  {
-                pix = sx;
-                piy = height % sy;
-              }
-
-            } else {
-          pix = sx;
-          piy = sy;
-        }
-            newColor = calcColor(pix, piy,x*pix,y*piy);
+            //se é o ultimo pixel da imagem nova e a imagem não deu divisao correta
+            if ((x == timesx - 1 && width % sx != 0) && (y == timesy - 1 && height % sy != 0)) {
+                xrec = width % sx;
+                yrec = height % sy;
+            }
+            else if(y == timesy - 1 && height % sy != 0){
+                xrec = sx;
+                yrec = height % sy;
+            }
+            else if(x == timesx - 1 && width % sx != 0){
+                xrec = width % sx;
+                yrec = sy;
+            }
+            else { //retangulo normal
+              xrec = sx;
+              yrec = sy;
+            }
+            newColor = calcColor(xrec, yrec,x*sx,y*sy);
             img.setPixel(x,y,newColor);
         }
     }
@@ -277,9 +277,9 @@ QRgb Img::calcColor(int pix, int piy, int x, int y){
     QRgb newColor;
     QColor oldColor;
 
-    for (int i = 0; i < pix; i++) {
-        for (int j = 0; j < piy; j++) {
-            oldColor = QColor(this->lastImg.pixel(i+x,j+y));
+    for (int i = x; i < pix+x; i++) {
+        for (int j = y; j < piy+y; j++) {
+            oldColor = QColor(this->lastImg.pixel(i,j));
             addR+= oldColor.red();
             addG+= oldColor.green();
             addB+= oldColor.blue();
@@ -417,27 +417,40 @@ void rotateArray(float arr[3][3]){
 
 QImage Img::convolution(float kernel[3][3], int tipo){
     rotateArray(kernel);
-    float sum;
+    float sumR, sumG, sumB;
     int value;
     QImage img (QSize(width, height), this->lastImg.format());
 
     for (int x=1;x<width-1;x++){
         for(int y=1;y<height-1;y++){
-            sum =0;
+            sumR =0;
+            sumG =0;
+            sumB =0;
             for (int k=-1; k<=1;k++){
                 for(int j=-1;j<=1;j++){
+                    //red
                     value = QColor(this->lastImg.pixel(x+j,y+k)).red();
-                    sum += kernel[j+1][k+1]* value;
+                    sumR += kernel[j+1][k+1]* value;
+                    //green
+                    value = QColor(this->lastImg.pixel(x+j,y+k)).green();
+                    sumG += kernel[j+1][k+1]* value;
+                    //blue
+                    value = QColor(this->lastImg.pixel(x+j,y+k)).blue();
+                    sumB += kernel[j+1][k+1]* value;
                 }
             }
             if (tipo){
-                sum = adjustValue(sum);
+                sumR = adjustValue(sumR);
+                sumG = adjustValue(sumG);
+                sumB = adjustValue(sumB);
             }
             else{
-                sum = adjustValue(sum+127);
+                sumR = adjustValue(sumR+127);
+                sumG = adjustValue(sumG+127);
+                sumB = adjustValue(sumB+127);
             }
 
-            img.setPixel(x,y,qRgb(sum,sum,sum));
+            img.setPixel(x,y,qRgb(sumR,sumG,sumB));
         }
     }
     this->lastImg = img.copy();
