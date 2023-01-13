@@ -37,7 +37,8 @@ QImage Img::convertToGreyScale(QImage img){
             img.setPixel(x,y,newColor);
         }
     }
-    return img;
+    this->lastImg = img.copy();
+    return this->lastImg;
 }
 
 void Img::changeBrightness(int value){
@@ -234,18 +235,14 @@ QImage Img::zoomOut(int sx, int sy){
     int timesx = static_cast<int>(ceil(width*1.0/sx));
     int timesy = static_cast<int>(ceil(height*1.0/sy));
 
-    QColor oldColor;
     QRgb newColor;
     QImage img (QSize(timesx, timesy), this->lastImg.format());
 
     int pix=sx, piy=sy;
 
-    qDebug() << "old size " << width << " x " << height;
-    qDebug() << "new size" << timesx << " x " << timesy;
-
     for (int x = 0; x < timesx; x++) {
         for (int y = 0; y < timesy; y++) {
-            //cout << " x " << x << " y " << y << "\n";
+
             if ((x == timesx - 1 && width % sx != 0) ||  (y == timesy - 1 && height % sy != 0)) {
               if((y == timesy - 1) && (x == timesx - 1)){
                 pix = width % sx;
@@ -263,18 +260,12 @@ QImage Img::zoomOut(int sx, int sy){
           pix = sx;
           piy = sy;
         }
-
             newColor = calcColor(pix, piy,x*pix,y*piy);
-
             img.setPixel(x,y,newColor);
-
-
         }
     }
-    //qDebug() << "size img " << img.size();
-    //qDebug() << "size lastImg" << this->lastImg.size();
+
     this->lastImg = img.copy();
-    //qDebug() << "size lastImg" << this->lastImg.size() << "\n";
     this->width = this->lastImg.width();
     this->height = this->lastImg.height();
     return this->lastImg;
@@ -286,20 +277,12 @@ QRgb Img::calcColor(int pix, int piy, int x, int y){
     QRgb newColor;
     QColor oldColor;
 
-    if (x==158 && y ==216){
-        qDebug() << "x "<< x << " y "<< y;
-    }
-    //qDebug() << "pixels " << pixels;
-
     for (int i = 0; i < pix; i++) {
         for (int j = 0; j < piy; j++) {
             oldColor = QColor(this->lastImg.pixel(i+x,j+y));
             addR+= oldColor.red();
             addG+= oldColor.green();
             addB+= oldColor.blue();
-            if (x==158 && y ==216){
-                qDebug() <<" r " << addR << " g " << addG << " b " << addB;
-            }
 
         }
     }
@@ -307,24 +290,48 @@ QRgb Img::calcColor(int pix, int piy, int x, int y){
     addG = addG*1.0/pixels;
     addB = addB*1.0/pixels;
     newColor = qRgb(addR,addG,addB);
-    if (x==158 && y ==216){
-        qDebug() <<"soma r " << addR << " g " << addG << " b " << addB;
-    }
-    //qDebug () << "\n\n break\n\n";
     return newColor;
 
+}
+
+QRgb Img::calcColorZoom(QImage img, int x, int y, int isLateral){
+    int red=0;
+    int green=0;
+    int blue=0;
+    QColor color;
+
+    if (isLateral){
+        color = QColor(img.pixel(x,y-1));
+        red+= color.red();
+        green+= color.green();
+        blue+= color.blue();
+
+        color = QColor(img.pixel(x,y+1));
+        red+= color.red();
+        green+= color.green();
+        blue+= color.blue();
+
+    }else{
+        color = QColor(img.pixel(x-1,y));
+        red+= color.red();
+        green+= color.green();
+        blue+= color.blue();
+
+        color = QColor(img.pixel(x+1,y));
+        red+= color.red();
+        green+= color.green();
+        blue+= color.blue();
+    }
+
+    return qRgb(red/2,green/2,blue/2);
 }
 
 QImage Img::zoomIn(){
     int width = this->lastImg.width();
     int height = this->lastImg.height();
     int newx = width*2-1, newy = height*2-1;
-    int red=0, green=0, blue=0;
     QRgb oldPixel, newPixel;
-    QColor color, rightColor;
     QImage img (QSize(newx, newy), this->lastImg.format());
-
-    qDebug() << "ne size " << img.size();
 
     //just the original pixels
     for(int x=0;x<newx;x++){
@@ -337,38 +344,13 @@ QImage Img::zoomIn(){
     }
     for(int x=0;x<newx;x++){
         for (int y =0;y<newy;y++){
-            if (x%2==0 && y%2!=0){//even rows
-                red=0;
-                green=0;
-                blue=0;
-                //qDebug() << "x " << x << " y " << y;
-                color = QColor(img.pixel(x,y-1));
-                red+= color.red();
-                green+= color.green();
-                blue+= color.blue();
-
-                color = QColor(img.pixel(x,y+1));
-                red+= color.red();
-                green+= color.green();
-                blue+= color.blue();
-                newPixel = qRgb(red/2,green/2,blue/2);
+            if (x%2==0 && y%2!=0 ){//even rows
+                newPixel = calcColorZoom(img, x, y, 1);
                 img.setPixel(x,y,newPixel);
 
             }
             else if(x%2!=0 && y%2==0){//even columns
-                red=0;
-                green=0;
-                blue=0;
-                color = QColor(img.pixel(x-1,y));
-                red+= color.red();
-                green+= color.green();
-                blue+= color.blue();
-
-                color = QColor(img.pixel(x+1,y));
-                red+= color.red();
-                green+= color.green();
-                blue+= color.blue();
-                newPixel = qRgb(red/2,green/2,blue/2);
+                newPixel = calcColorZoom(img, x, y, 0);
                 img.setPixel(x,y,newPixel);
             }
         }
@@ -376,27 +358,88 @@ QImage Img::zoomIn(){
     for(int x=0;x<newx;x++){
         for (int y =0;y<newy;y++){
             if (x%2!=0 && y%2!=0){
-                red=0;
-                green=0;
-                blue=0;
-                color = QColor(img.pixel(x,y-1));
-                red+= color.red();
-                green+= color.green();
-                blue+= color.blue();
-
-                color = QColor(img.pixel(x,y+1));
-                red+= color.red();
-                green+= color.green();
-                blue+= color.blue();
-                newPixel = qRgb(red/2,green/2,blue/2);
+                newPixel = calcColorZoom(img, x, y, 0);
                 img.setPixel(x,y,newPixel);
             }
         }
     }
 
     this->lastImg = img.copy();
-    //qDebug() << "size lastImg" << this->lastImg.size() << "\n";
     this->width = this->lastImg.width();
     this->height = this->lastImg.height();
+    return this->lastImg;
+}
+
+
+
+QImage Img::rotate(int right){
+
+    int nwidth = height, nheight = this->width;
+    QImage img (QSize(nwidth, nheight), this->lastImg.format());
+
+    QRgb pix;
+    for (int x=0;x<this->width;x++){
+        for(int y=0;y<this->height;y++){
+            pix = this->lastImg.pixel(x,y);
+            if (right){
+                img.setPixel(this->height-y-1,x,pix);
+            }else{
+                img.setPixel(y,this->width-x-1,pix);
+            }
+        }
+    }
+    this->lastImg = img.copy();
+    this->width = this->lastImg.width();
+    this->height = this->lastImg.height();
+    return this->lastImg;
+}
+
+void rotateArray(float arr[3][3]){
+    float copy [3][3];
+    copy[0][0] = arr[2][0];
+    copy[0][1] = arr[2][1];
+    copy[0][2] = arr[2][2];
+    copy[2][0] = arr[0][0];
+    copy[2][1] = arr[0][1];
+    copy[2][2] = arr[0][2];
+
+    copy[1][1] = arr[1][1];
+    copy[1][0] = arr[1][2];
+    copy[1][2] = arr[1][0];
+    for(int x=0;x<3;x++){
+        for(int y=0;y<3;y++){
+            arr[x][y]=copy[x][y];
+        }
+    }
+
+}
+
+
+QImage Img::convolution(float kernel[3][3], int tipo){
+    rotateArray(kernel);
+    float sum;
+    int value;
+    QImage img (QSize(width, height), this->lastImg.format());
+
+    for (int x=1;x<width-1;x++){
+        for(int y=1;y<height-1;y++){
+            sum =0;
+            for (int k=-1; k<=1;k++){
+                for(int j=-1;j<=1;j++){
+                    value = QColor(this->lastImg.pixel(x+j,y+k)).red();
+                    sum += kernel[j+1][k+1]* value;
+                }
+            }
+            if (tipo){
+                sum = adjustValue(sum);
+            }
+            else{
+                sum = adjustValue(sum+127);
+            }
+
+            img.setPixel(x,y,qRgb(sum,sum,sum));
+        }
+    }
+    this->lastImg = img.copy();
     return this->lastImg;
 }

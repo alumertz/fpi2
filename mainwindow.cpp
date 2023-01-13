@@ -252,9 +252,17 @@ void MainWindow::on_zoomOutButton_clicked()
 
     QPixmap oldPic;
     oldPic = oldPic.fromImage((*image).getOriImg());
-    ui->oriImage->setPixmap(oldPic);
-}
 
+    QLabel * label_imgOri = new QLabel (this);
+    label_imgOri->setWindowFlags(Qt::Window);
+    label_imgOri->setPixmap(oldPic);
+    label_imgOri->show();
+
+    QLabel * label_imgZoom = new QLabel (this);
+    label_imgZoom->setWindowFlags(Qt::Window);
+    label_imgZoom->setPixmap(newPic);
+    label_imgZoom->show();
+}
 
 void MainWindow::on_zoomInButton_clicked()
 {
@@ -266,6 +274,116 @@ void MainWindow::on_zoomInButton_clicked()
 
     QPixmap oldPic;
     oldPic = oldPic.fromImage((*image).getOriImg());
-    ui->oriImage->setPixmap(oldPic);
+
+
+    QLabel * label_imgOri = new QLabel (this);
+    label_imgOri->setWindowFlags(Qt::Window);
+    label_imgOri->setPixmap(oldPic);
+    label_imgOri->show();
+
+    QLabel * label_imgZoom = new QLabel (this);
+    label_imgZoom->setWindowFlags(Qt::Window);
+    label_imgZoom->setPixmap(newPic);
+    label_imgZoom->show();
+
+
 }
+
+void MainWindow::on_rotateRightButton_clicked()
+{
+    QImage img = (*image).rotate(1);
+
+    QPixmap newPic;
+    newPic = newPic.fromImage(img);
+    ui->proImage->setPixmap(newPic.scaled(300,300,Qt::KeepAspectRatio));
+}
+
+void MainWindow::on_rotateLeftButton_clicked()
+{
+    QImage img = (*image).rotate(0);
+
+    QPixmap newPic;
+    newPic = newPic.fromImage(img);
+    ui->proImage->setPixmap(newPic.scaled(300,300,Qt::KeepAspectRatio));
+}
+
+void MainWindow::convolution(float arr[3][3],int tipo){
+    (*image).convertToGreyScale((*image).getLastImg());
+
+    QImage img = (*image).convolution(arr,tipo);
+
+    QPixmap newPic;
+    newPic = newPic.fromImage(img);
+    ui->proImage->setPixmap(newPic.scaled(300,300,Qt::KeepAspectRatio));
+}
+
+void MainWindow::on_convolutionButton_clicked()
+{
+    float arr[3][3];
+    arr[0][0] = ui->cBox_0->value();
+    arr[0][1] = ui->cBox_1->value();
+    arr[0][2] = ui->cBox_2->value();
+    arr[1][0] = ui->cBox_3->value();
+    arr[1][1] = ui->cBox_4->value();
+    arr[1][2] = ui->cBox_5->value();
+    arr[2][0] = ui->cBox_6->value();
+    arr[2][1] = ui->cBox_7->value();
+    arr[2][2] = ui->cBox_8->value();
+
+    convolution(arr,0);
+}
+
+void MainWindow::on_gaussianButton_clicked()
+{
+    //fazer pra imagens coloridas
+    float arr[3][3] = {{0.0625, 0.125, 0.0625}, {0.125, 0.25, 0.125}, {0.0625, 0.125, 0.0625}};
+    QImage img = (*image).convolution(arr,1);//não soma 127
+    QPixmap newPic;
+    newPic = newPic.fromImage(img);
+    ui->proImage->setPixmap(newPic.scaled(300,300,Qt::KeepAspectRatio));
+}
+
+void MainWindow::on_laplacianButton_clicked()
+{
+    float arr[3][3] = {{0, -1, 0}, {-1, 4, -1}, {0, -1, 0}};
+    convolution(arr,0);
+}
+
+
+void MainWindow::on_highPassButton_clicked()
+{
+    float arr[3][3] = {{-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1}};
+    convolution(arr,1);//não soma 127
+}
+
+
+void MainWindow::on_prewittXButton_clicked()
+{
+    float arr[3][3] = {{-1, 0, 1}, {-1, 0, 1}, {-1, 0, 1}};
+    convolution(arr,0);
+}
+
+
+void MainWindow::on_prewittYButton_clicked()
+{
+    float arr[3][3] = {{-1, -1, -1}, {0, 0, 0}, {1, 1, 1}};
+    convolution(arr,0);
+}
+
+
+void MainWindow::on_sobelXButton_clicked()
+{
+    float arr[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+    convolution(arr,0);
+}
+
+
+void MainWindow::on_sobelYButton_clicked()
+{
+    float arr[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+    convolution(arr,0);
+}
+
+
+
 

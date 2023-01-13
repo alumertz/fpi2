@@ -49,8 +49,29 @@ private slots:
 
     void on_zoomInButton_clicked();
 
+    void on_rotateRightButton_clicked();
+
+    void on_rotateLeftButton_clicked();
+
+    void on_convolutionButton_clicked();
+
+    void on_laplacianButton_clicked();
+
+    void on_highPassButton_clicked();
+
+    void on_prewittXButton_clicked();
+
+    void on_prewittYButton_clicked();
+
+    void on_sobelXButton_clicked();
+
+    void on_sobelYButton_clicked();
+
+    void on_gaussianButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QChart* createBarCharts() const;
+    void convolution(float arr[3][3], int tipo);
 };
 #endif // MAINWINDOW_H

@@ -43,6 +43,9 @@ class Img
         QRgb calcColor(int pix, int piy, int x, int y);
         QImage zoomOut(int sx, int sy );
         QImage zoomIn();
+        QImage rotate(int right);
+        QImage convolution(float kernel[3][3], int tipo);
+        QRgb calcColorZoom(QImage img, int x, int y, int isLateral);
 };
 
 #endif // IMAGE_H
