@@ -32,10 +32,11 @@ class Img
         QImage getLastImg(){return lastImg;}
         void changeBrightness(int value);
         QImage convertToGreyScale(QImage img);
-        void changeContrast(int value);
+        void changeContrast(float value);
         void negative();
         QMap<QRgb,long> histogram();
         int getNumPixels();
+        vector<int> normalize(vector<int> hist);
         vector<int> greyHistogram(QImage img);
         vector<int> greyHistogramCum(QImage img);
         void greyImageEqualization();

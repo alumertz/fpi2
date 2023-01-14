@@ -22,7 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/manuelOriginal.png";
+    //QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/manuelOriginal.png";
+    QString fileName = "/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/cidadeSubexposta.png";
     //QMessageBox::information(this, "..", fileName);
     QPixmap oldPic (fileName);
     ui->oriImage->setPixmap(oldPic.scaled(300,300,Qt::KeepAspectRatio));
@@ -117,7 +118,6 @@ QChart* MainWindow::createBarCharts()const{
     QValueAxis *axisX = new QValueAxis();
     QValueAxis *axisY = new QValueAxis();
     axisX->setRange(0,QSHADES);
-    axisY->setRange(0,1000);
     axisX->setTickCount(10);
     axisY->setTickCount(10);
     axisX->setLabelFormat("%d");
@@ -133,11 +133,13 @@ QChart* MainWindow::createBarCharts()const{
 
     // CONFIG
     chart->legend()->setVisible(false);
-    chart->setPlotArea(QRectF (0,0,300,280));//QRECTF(qreal x, qreal y, qreal width, qreal height)
+    chart->setPlotArea(QRectF (30,30,330,240));//QRECTF(qreal x, qreal y, qreal width, qreal height)
     return chart;
 }
 
 void MainWindow::updateChart(std::vector<int> &hist, QChart * chart, QChartView *chartView){
+    double max = *max_element(std::begin(hist), std::end(hist));
+
     //SET
     QBarSet *set = new QBarSet("other");
     set->setColor(Qt::red);
@@ -151,6 +153,12 @@ void MainWindow::updateChart(std::vector<int> &hist, QChart * chart, QChartView 
     series = new QBarSeries();
     series->append(set);
 
+    //AXIS
+    QValueAxis *axisY = new QValueAxis();
+
+    //axisY->setRange(0,255);
+    chart->setAxisY(axisY, series);
+
     chart->removeAllSeries();
     chart->addSeries(series);
     chartView->update();
@@ -161,12 +169,18 @@ void MainWindow::on_histogramButton_clicked()
 {
     //Orginal image
     QImage oriGrey = (*image).convertToGreyScale((*image).getOriImg());
-    vector<int> hist = (*image).greyHistogram(oriGrey);
+    vector<int> hist = (*image).normalize((*image).greyHistogram(oriGrey));
+    //vector<int> hist = (*image).greyHistogram(oriGrey);
+    double max = *max_element(std::begin(hist), std::end(hist));
+    qDebug() << "max ori " << max;
     updateChart(hist, oriChart,oriChartView);
 
     //Last Image
-    QImage lastGrey = (*image).convertToGreyScale(proImage);
-    vector<int> newHist = (*image).greyHistogram(lastGrey);
+    QImage lastGrey = (*image).convertToGreyScale((*image).getLastImg());
+    vector<int> newHist = (*image).normalize((*image).greyHistogram(lastGrey));
+    //vector<int> newHist = (*image).greyHistogram(lastGrey);
+    double maxn = *max_element(std::begin(newHist), std::end(newHist));
+    qDebug() << "max new " << maxn;
     updateChart(newHist, newChart,newChartView);
     updateImage();
 
@@ -184,7 +198,7 @@ void MainWindow::on_resetButton_clicked()
 
 void MainWindow::on_contrastButton_clicked()
 {
-    int value = ui->contrastBox->value();
+    float value = ui->contrastBox->value();
     (*image).changeContrast(value);
     updateImage();
 }
@@ -208,15 +222,17 @@ void MainWindow::on_equalizeButton_clicked()
 
 void MainWindow::on_matchingButton_clicked()
 {
-    //QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
+    QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
+    QImage matchImg(fileName);
     //QMessageBox::information(this, "Essa imagem ", fileName);
 
     //GETS SECOND IMAGE
-    QImage matchImg("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
+    //QImage matchImg("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
 
 
     //DISPLAY SECOND IMAGE SELECTED
-    QPixmap secPic ("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
+    //QPixmap secPic ("/home/ana/Documentos/UFRGS/fpi2/fpi2/test_images/portraitTarget.png");
+    QPixmap secPic(fileName);
     ui->proImage->setPixmap(secPic.scaled(300,300,Qt::KeepAspectRatio));
     QImage secGrey = (*image).convertToGreyScale(matchImg);
     vector<int> histSec = (*image).greyHistogram(secGrey);

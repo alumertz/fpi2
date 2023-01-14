@@ -5,11 +5,8 @@ Img::Img(QString filePath)
     this->oriFilePath = filePath;
 
     oriImg.load(filePath);
-    lastImg.load(filePath);
-    /*oriImg = new QImage(filePath);
-    oriImg->convertToFormat(QImage::Format_Indexed8);
-    lastImg = oriImg;*/
-
+    this->lastImg = this->oriImg.copy();
+    //lastImg.load(filePath);
 
     this->width = oriImg.width();
     this->height = oriImg.height();
@@ -27,8 +24,6 @@ void Img::resetImage(){
 
 QImage Img::convertToGreyScale(QImage img){
     QColor oldColor;
-    int width= img.width();
-    int height = img.height();
     for(int x = 0; x<width; x++){
         for(int y = 0; y<height; y++){
             oldColor = QColor(img.pixel(x,y));
@@ -58,11 +53,12 @@ void Img::changeBrightness(int value){
     }
 }
 
-void Img::changeContrast(int value){
+void Img::changeContrast(float value){
     QColor oldColor;
     QRgb newColor;
     int red, green, blue;
-    float per = value*1.0/255; // MUDAR?
+    float per = value;
+    //float per = value*1.0/255;
     cout << " per " << per;
 
     for(int x = 0; x<this->width; x++){
@@ -93,6 +89,31 @@ void Img::negative(){
         }
     }
 }
+
+
+vector<int> Img::normalize(vector<int> hist){
+    double max = *max_element(std::begin(hist), std::end(hist));
+    vector <int> nhist;
+    for (int x=0;x<hist.size();x++){
+        nhist.push_back(round(hist[x]*1.0 *255/max));
+    }
+    return nhist;
+}
+
+/*void Img::labEqualization(){
+
+}
+
+vector<vector<int>> Img::getLuminance(QImage img){
+    vector<vector<int>> vet;
+    QColor = oldColor;
+    for(int x = 0; x<width; x++){
+        for(int y = 0; y<height; y++){
+            oldColor = QColor(img.pixel(x,y));
+            vet[x][y] = (oldColor.red()*0.299+oldColor.green()*0.587+oldColor.blue()*0.114);
+        }
+    }
+}*/
 
 vector<int> Img::greyHistogram(QImage img){
     int color;
@@ -149,9 +170,8 @@ void Img::greyImageEqualization(){//Equalizes lastImg, turning grey, saves in la
 }
 
 int findClosestShade(int search, std::vector<int> histCumMatch){
-    qDebug() << "search" << search;
+
     int minDif = abs(histCumMatch[0]- search);
-    qDebug() << "minDif" << minDif;
     int shadeMinDif = 0;
     int newDif;
     for (int x=1; x<=255;x++){
@@ -159,10 +179,9 @@ int findClosestShade(int search, std::vector<int> histCumMatch){
         if (newDif< minDif){
             minDif = newDif;            
             shadeMinDif = x;
-            qDebug() << "minDif" << minDif;
-            qDebug() << "shademinDif" << shadeMinDif;
         }
     }
+    qDebug() << "search" << search << " shademindif "<< shadeMinDif;
     return shadeMinDif;
 }
 
@@ -170,24 +189,20 @@ QImage Img::greyHistMatching(QImage matchImg){//original = src, match=target, la
     QImage resImg (this->getOriImg().size(), this->getOriImg().format());
 
     vector<int> histOri = this->greyHistogram(this->getOriImg());
-    vector<int> histMatch = this->greyHistogram(this->getOriImg());
-    vector<int> histCumOri = this->greyHistogramCum(matchImg); //F1
+    vector<int> histMatch = this->greyHistogram(matchImg);
+    vector<int> histCumOri = this->greyHistogramCum(this->getOriImg()); //F1
     vector<int> histCumMatch = this->greyHistogramCum(matchImg); //F2
 
     vector<int> match (256, 0);
     int shade, newShade;
     QRgb newColor;
-    qDebug() << "teste";
     for (int x=0; x<=255;x++){
         match[x] = findClosestShade(histCumOri[x], histCumMatch);  //find F1(G1) = F2(G2)
-        //qDebug() << match[x];
     }
-    qDebug() << "\nspace\n";
     for(int x = 0; x<this->width; x++){
         for(int y = 0; y<this->height; y++){
             shade = QColor(this->oriImg.pixel(x,y)).red();
             newShade = match[shade];
-            //qDebug() << newShade;
             newColor = qRgb(newShade,newShade,newShade);
             resImg.setPixel(x,y,newColor);
         }
@@ -370,8 +385,6 @@ QImage Img::zoomIn(){
     return this->lastImg;
 }
 
-
-
 QImage Img::rotate(int right){
 
     int nwidth = height, nheight = this->width;
@@ -413,7 +426,6 @@ void rotateArray(float arr[3][3]){
     }
 
 }
-
 
 QImage Img::convolution(float kernel[3][3], int tipo){
     rotateArray(kernel);
