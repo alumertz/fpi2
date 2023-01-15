@@ -220,6 +220,28 @@ void MainWindow::on_equalizeButton_clicked()
     updateImage();
 }
 
+
+void MainWindow::on_equalizeColorButton_clicked()
+{
+    //vector<int> newHist = (*image).greyHistogram((*image).getLastImg());
+
+    //updateChart(newHist, newChart,newChartView);
+    (*image).colorImageEqualization();
+    updateImage();
+}
+
+void MainWindow::on_equalizelabButton_clicked()
+{    QImage img = (*image).labEqualization((*image).getLastImg());
+
+     QPixmap newPic;
+     newPic = newPic.fromImage(img);
+     ui->proImage->setPixmap(newPic.scaled(300,300,Qt::KeepAspectRatio));
+
+
+}
+
+
+
 void MainWindow::on_matchingButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, QDir::homePath());
@@ -249,14 +271,10 @@ void MainWindow::on_matchingButton_clicked()
     vector<int> histRes = (*image).greyHistogram(resImage);
     updateChart(histRes, resChart,resChartView);
 
-
-
-
 }
 
 void MainWindow::on_zoomOutButton_clicked()
 {
-
 
     int zoomX = ui->zoomXbox->value();
     int zoomY = ui->zoomYbox->value();
@@ -365,13 +383,11 @@ void MainWindow::on_laplacianButton_clicked()
     convolution(arr,0);
 }
 
-
 void MainWindow::on_highPassButton_clicked()
 {
     float arr[3][3] = {{-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1}};
     convolution(arr,1);//não soma 127
 }
-
 
 void MainWindow::on_prewittXButton_clicked()
 {
@@ -379,13 +395,11 @@ void MainWindow::on_prewittXButton_clicked()
     convolution(arr,0);
 }
 
-
 void MainWindow::on_prewittYButton_clicked()
 {
     float arr[3][3] = {{-1, -1, -1}, {0, 0, 0}, {1, 1, 1}};
     convolution(arr,0);
 }
-
 
 void MainWindow::on_sobelXButton_clicked()
 {
@@ -393,13 +407,11 @@ void MainWindow::on_sobelXButton_clicked()
     convolution(arr,0);
 }
 
-
 void MainWindow::on_sobelYButton_clicked()
 {
     float arr[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
     convolution(arr,0);
 }
-
 
 
 

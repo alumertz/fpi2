@@ -189,12 +189,12 @@
      <rect>
       <x>20</x>
       <y>200</y>
-      <width>89</width>
+      <width>81</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>Equalize</string>
+     <string>Equa. grey</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -270,7 +270,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>230</y>
+      <y>260</y>
       <width>151</width>
       <height>25</height>
      </rect>
@@ -283,7 +283,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>260</y>
+      <y>290</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -296,7 +296,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>260</y>
+      <y>290</y>
       <width>44</width>
       <height>26</height>
      </rect>
@@ -312,7 +312,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>260</y>
+      <y>290</y>
       <width>44</width>
       <height>26</height>
      </rect>
@@ -328,7 +328,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>290</y>
+      <y>320</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -340,8 +340,8 @@
    <widget class="QPushButton" name="rotateRightButton">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>320</y>
+      <x>120</x>
+      <y>350</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -667,6 +667,32 @@
     </property>
     <property name="text">
      <string>Matched</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="equalizelabButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>111</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Equalize l*a*b*</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="equalizeColorButton">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>200</y>
+      <width>81</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Equa. color</string>
     </property>
    </widget>
   </widget>

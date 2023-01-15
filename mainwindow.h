@@ -69,6 +69,10 @@ private slots:
 
     void on_gaussianButton_clicked();
 
+    void on_equalizelabButton_clicked();
+
+    void on_equalizeColorButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QChart* createBarCharts() const;
